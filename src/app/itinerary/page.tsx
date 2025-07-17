@@ -24,39 +24,23 @@ const ItineraryPage = () => {
   ];
 
   useEffect(() => {
-    // Check if animation has already played in this session
-    const hasAnimated = sessionStorage.getItem('itinerary-animated');
-    
-    if (hasAnimated) {
-      // If already animated, show all items immediately
-      setVisibleItems(timelineItems.map((_, index) => index));
-    } else {
-      // If not animated yet, play the animation and mark as done
-      const totalItems = timelineItems.length;
-      const animationDelay = 400;
+    // Play the animation every time the page loads
+    const totalItems = timelineItems.length;
+    const animationDelay = 400;
 
-      for (let i = 0; i < totalItems; i++) {
-        setTimeout(() => {
-          setVisibleItems(prev => [...prev, i]);
-        }, i * animationDelay);
-      }
-      
-      // Mark that animation has played in this session
-      sessionStorage.setItem('itinerary-animated', 'true');
+    // Clear any existing visible items
+    setVisibleItems([]);
+
+    // Animate items one by one
+    for (let i = 0; i < totalItems; i++) {
+      setTimeout(() => {
+        setVisibleItems(prev => [...prev, i]);
+      }, i * animationDelay);
     }
   }, []);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 5, px: { xs: 2, sm: 4, md: 8 }, position: 'relative' }}>
-
-{/* <Typography variant="body1" component="h5" gutterBottom align="center" 
-            sx={{
-                fontFamily: 'var(--font-cinzel)',
-                color: 'black',
-                fontSize: '1.25rem'
-            }}>
-              Please arrive no later than 12:15 so we can start the ceremony on time!
-        </Typography> */}
       <Timeline position="alternate" sx={{ 
         '& .MuiTimelineConnector-root': {
           bgcolor: 'black',

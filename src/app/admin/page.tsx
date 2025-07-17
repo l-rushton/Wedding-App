@@ -26,7 +26,9 @@ import {
   DialogActions,
   IconButton,
   Tooltip,
-  Snackbar
+  Snackbar,
+  Tabs,
+  Tab
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -57,9 +59,33 @@ interface Address {
   address: string;
 }
 
+interface RegistryPurchase {
+  id: string;
+  itemName: string;
+  itemUrl: string;
+  itemImageUrl: string;
+  purchaserName: string;
+  purchaserMessage?: string;
+  purchasedAt: string;
+}
+
+interface RegistryItem {
+  id: string;
+  itemName: string;
+  itemUrl: string;
+  itemImageUrl: string;
+  status: string;
+  purchaserName?: string;
+  purchaserMessage?: string;
+  purchasedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const AdminPage = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [registryPurchases, setRegistryPurchases] = useState<RegistryPurchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState('');
@@ -72,6 +98,11 @@ const AdminPage = () => {
   const [newGuest, setNewGuest] = useState({ name: '', address: '' });
   const [bulkImportData, setBulkImportData] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [activeTab, setActiveTab] = useState(0);
+  const [registryItems, setRegistryItems] = useState<RegistryItem[]>([]);
+  const [showAddItemDialog, setShowAddItemDialog] = useState(false);
+  const [newItem, setNewItem] = useState({ itemName: '', itemUrl: '', itemImageUrl: '' });
+  const [itemLoading, setItemLoading] = useState(false);
 
   const ADMIN_PASSWORD = 'wedding2025'; // You should change this to a secure password
 
@@ -80,6 +111,7 @@ const AdminPage = () => {
       setIsAuthenticated(true);
       fetchGuests();
       fetchAddresses();
+      fetchRegistryPurchases();
     } else {
       setError('Incorrect password');
     }
@@ -109,6 +141,32 @@ const AdminPage = () => {
       }
     } catch (err) {
       console.error('Failed to fetch addresses:', err);
+    }
+  };
+
+  const fetchRegistryPurchases = async () => {
+    try {
+      const response = await fetch('/api/registry');
+      if (response.ok) {
+        const data = await response.json();
+        setRegistryPurchases(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch registry purchases:', err);
+    }
+  };
+
+  const fetchRegistryItems = async () => {
+    try {
+      setItemLoading(true);
+      const response = await fetch('/api/registry/items?all=1');
+      if (response.ok) {
+        const data = await response.json();
+        setRegistryItems(data);
+      }
+      setItemLoading(false);
+    } catch (err) {
+      setItemLoading(false);
     }
   };
 
@@ -251,6 +309,74 @@ const AdminPage = () => {
     }
   };
 
+  const handleDeleteRegistryPurchase = async (purchaseId: string) => {
+    if (!confirm('Are you sure you want to remove this purchase record?')) return;
+
+    try {
+      const response = await fetch(`/api/registry/${purchaseId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete purchase');
+      }
+
+      await fetchRegistryPurchases();
+      setSnackbar({ open: true, message: 'Purchase record removed successfully', severity: 'success' });
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Failed to remove purchase record', severity: 'error' });
+    }
+  };
+
+  const handleAddRegistryItem = async () => {
+    try {
+      const response = await fetch('/api/registry/items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newItem)
+      });
+      if (!response.ok) throw new Error('Failed to add item');
+      await fetchRegistryItems();
+      setShowAddItemDialog(false);
+      setNewItem({ itemName: '', itemUrl: '', itemImageUrl: '' });
+      setSnackbar({ open: true, message: 'Item added successfully', severity: 'success' });
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Failed to add item', severity: 'error' });
+    }
+  };
+
+  const handleDeleteRegistryItem = async (itemId: string) => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+    try {
+      const response = await fetch(`/api/registry/items/${itemId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Failed to delete item');
+      await fetchRegistryItems();
+      setSnackbar({ open: true, message: 'Item deleted successfully', severity: 'success' });
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Failed to delete item', severity: 'error' });
+    }
+  };
+
+  const handleToggleRegistryItemStatus = async (item: RegistryItem) => {
+    try {
+      const response = await fetch(`/api/registry/items/${item.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: item.status === 'available' ? 'purchased' : 'available',
+          purchaserName: item.status === 'available' ? 'Admin' : null,
+          purchaserMessage: null,
+          purchasedAt: item.status === 'available' ? new Date().toISOString() : null
+        })
+      });
+      if (!response.ok) throw new Error('Failed to update item');
+      await fetchRegistryItems();
+      setSnackbar({ open: true, message: 'Item status updated', severity: 'success' });
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Failed to update item', severity: 'error' });
+    }
+  };
+
   const getAttendanceStats = () => {
     const total = guests.length;
     const attending = guests.filter(g => g.rsvp === true).length;
@@ -260,6 +386,15 @@ const AdminPage = () => {
   };
 
   const stats = getAttendanceStats();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchGuests();
+      fetchAddresses();
+      fetchRegistryPurchases();
+      fetchRegistryItems();
+    }
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return (
@@ -377,121 +512,300 @@ const AdminPage = () => {
             <Typography variant="h6" color="warning.main">{stats.pending}</Typography>
             <Typography variant="body2">Pending</Typography>
           </Paper>
+          <Paper sx={{ p: 2, textAlign: 'center', minWidth: '120px' }}>
+            <Typography variant="h6" color="info.main">{registryPurchases.length}</Typography>
+            <Typography variant="body2">Registry Purchases</Typography>
+          </Paper>
         </Box>
 
-        {/* Controls */}
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          mb: 3,
-          flexWrap: 'wrap',
-          gap: 2
-        }}>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <FormControl sx={{ minWidth: 200 }}>
-              <InputLabel>Filter</InputLabel>
-              <Select
-                value={filter}
-                label="Filter"
-                onChange={handleFilterChange}
+        {/* Tabs */}
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+          <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
+            <Tab label="Guest Management" />
+            <Tab label="Registry Purchases" />
+            <Tab label="Registry Items" />
+          </Tabs>
+        </Box>
+
+        {/* Guest Management Tab */}
+        {activeTab === 0 && (
+          <>
+            {/* Controls */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              mb: 3,
+              flexWrap: 'wrap',
+              gap: 2
+            }}>
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                <FormControl sx={{ minWidth: 200 }}>
+                  <InputLabel>Filter</InputLabel>
+                  <Select
+                    value={filter}
+                    label="Filter"
+                    onChange={handleFilterChange}
+                  >
+                    <MenuItem value="all">All Guests</MenuItem>
+                    <MenuItem value="attending">Attending</MenuItem>
+                    <MenuItem value="not-attending">Not Attending</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <Button 
+                  variant="outlined" 
+                  startIcon={<AddIcon />}
+                  onClick={() => setShowAddDialog(true)}
+                >
+                  Add Guest
+                </Button>
+
+                <Button 
+                  variant="outlined" 
+                  startIcon={<UploadIcon />}
+                  onClick={() => setShowBulkImportDialog(true)}
+                >
+                  Bulk Import
+                </Button>
+              </Box>
+
+              <Button 
+                variant="contained" 
+                onClick={exportToCSV}
+                sx={{ bgcolor: 'secondary.main' }}
               >
-                <MenuItem value="all">All Guests</MenuItem>
-                <MenuItem value="attending">Attending</MenuItem>
-                <MenuItem value="not-attending">Not Attending</MenuItem>
-              </Select>
-            </FormControl>
+                Export to CSV
+              </Button>
+            </Box>
 
-            <Button 
-              variant="outlined" 
-              startIcon={<AddIcon />}
-              onClick={() => setShowAddDialog(true)}
-            >
-              Add Guest
-            </Button>
+            {/* Guest Table */}
+            <TableContainer component={Paper} sx={{ maxHeight: '70vh' }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Address</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Attending</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Starter</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Main</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Dessert</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Dietary Requirements</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredGuests.map((guest) => (
+                    <TableRow key={guest.id}>
+                      <TableCell>{guest.name}</TableCell>
+                      <TableCell>{guest.address?.address || '-'}</TableCell>
+                      <TableCell>
+                        {guest.rsvp === null ? (
+                          <Typography color="warning.main">Pending</Typography>
+                        ) : guest.rsvp ? (
+                          <Typography color="success.main">Yes</Typography>
+                        ) : (
+                          <Typography color="error.main">No</Typography>
+                        )}
+                      </TableCell>
+                      <TableCell>{guest.menuChoices?.appetiser || '-'}</TableCell>
+                      <TableCell>{guest.menuChoices?.main || '-'}</TableCell>
+                      <TableCell>{guest.menuChoices?.dessert || '-'}</TableCell>
+                      <TableCell sx={{ maxWidth: 200 }}>
+                        {guest.dietaryReqs || '-'}
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Tooltip title="Edit Guest">
+                            <IconButton 
+                              size="small" 
+                              onClick={() => {
+                                setEditingGuest(guest);
+                                setShowEditDialog(true);
+                              }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete Guest">
+                            <IconButton 
+                              size="small" 
+                              color="error"
+                              onClick={() => handleDeleteGuest(guest.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
 
-            <Button 
-              variant="outlined" 
-              startIcon={<UploadIcon />}
-              onClick={() => setShowBulkImportDialog(true)}
-            >
-              Bulk Import
-            </Button>
-          </Box>
+        {/* Registry Purchases Tab */}
+        {activeTab === 1 && (
+          <>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Registry Purchases ({registryPurchases.length})
+            </Typography>
+            
+            <TableContainer component={Paper} sx={{ maxHeight: '70vh' }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Item</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Purchaser</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Message</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Purchased Date</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {registryPurchases.map((purchase) => (
+                    <TableRow key={purchase.id}>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box
+                            component="img"
+                            src={purchase.itemImageUrl}
+                            alt={purchase.itemName}
+                            sx={{
+                              width: '50px',
+                              height: '50px',
+                              objectFit: 'cover',
+                              borderRadius: 1,
+                              border: '1px solid #e0e0e0'
+                            }}
+                          />
+                          <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                            {purchase.itemName}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                          {purchase.purchaserName}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ maxWidth: 200 }}>
+                        {purchase.purchaserMessage || '-'}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(purchase.purchasedAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip title="Remove Purchase Record">
+                          <IconButton 
+                            size="small" 
+                            color="error"
+                            onClick={() => handleDeleteRegistryPurchase(purchase.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
 
-          <Button 
-            variant="contained" 
-            onClick={exportToCSV}
-            sx={{ bgcolor: 'secondary.main' }}
-          >
-            Export to CSV
-          </Button>
-        </Box>
-
-        {/* Table */}
-        <TableContainer component={Paper} sx={{ maxHeight: '70vh' }}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Address</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Attending</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Starter</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Main</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Dessert</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Dietary Requirements</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredGuests.map((guest) => (
-                <TableRow key={guest.id}>
-                  <TableCell>{guest.name}</TableCell>
-                  <TableCell>{guest.address?.address || '-'}</TableCell>
-                  <TableCell>
-                    {guest.rsvp === null ? (
-                      <Typography color="warning.main">Pending</Typography>
-                    ) : guest.rsvp ? (
-                      <Typography color="success.main">Yes</Typography>
-                    ) : (
-                      <Typography color="error.main">No</Typography>
-                    )}
-                  </TableCell>
-                  <TableCell>{guest.menuChoices?.appetiser || '-'}</TableCell>
-                  <TableCell>{guest.menuChoices?.main || '-'}</TableCell>
-                  <TableCell>{guest.menuChoices?.dessert || '-'}</TableCell>
-                  <TableCell sx={{ maxWidth: 200 }}>
-                    {guest.dietaryReqs || '-'}
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Tooltip title="Edit Guest">
-                        <IconButton 
-                          size="small" 
-                          onClick={() => {
-                            setEditingGuest(guest);
-                            setShowEditDialog(true);
-                          }}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Guest">
-                        <IconButton 
-                          size="small" 
-                          color="error"
-                          onClick={() => handleDeleteGuest(guest.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {/* Registry Items Tab */}
+        {activeTab === 2 && (
+          <>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6">Registry Items ({registryItems.length})</Typography>
+              <Button variant="contained" onClick={() => setShowAddItemDialog(true)} sx={{ bgcolor: 'secondary.main' }}>
+                Add Item
+              </Button>
+            </Box>
+            <TableContainer component={Paper} sx={{ maxHeight: '70vh' }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Item</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {registryItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box
+                            component="img"
+                            src={item.itemImageUrl}
+                            alt={item.itemName}
+                            sx={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: 1, border: '1px solid #e0e0e0' }}
+                          />
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{item.itemName}</Typography>
+                            <Typography variant="caption" color="text.secondary">{item.itemUrl}</Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color={item.status === 'available' ? 'success.main' : 'error.main'}>
+                          {item.status === 'available' ? 'Available' : 'Purchased'}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Button size="small" variant="outlined" onClick={() => handleToggleRegistryItemStatus(item)}>
+                          {item.status === 'available' ? 'Mark Purchased' : 'Mark Available'}
+                        </Button>
+                        <Button size="small" color="error" variant="outlined" sx={{ ml: 1 }} onClick={() => handleDeleteRegistryItem(item.id)}>
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* Add Item Dialog */}
+            <Dialog open={showAddItemDialog} onClose={() => setShowAddItemDialog(false)} maxWidth="sm" fullWidth>
+              <DialogTitle>Add Registry Item</DialogTitle>
+              <DialogContent>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+                  <TextField
+                    label="Item Name"
+                    value={newItem.itemName}
+                    onChange={(e) => setNewItem({ ...newItem, itemName: e.target.value })}
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    label="Item URL"
+                    value={newItem.itemUrl}
+                    onChange={(e) => setNewItem({ ...newItem, itemUrl: e.target.value })}
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    label="Image URL"
+                    value={newItem.itemImageUrl}
+                    onChange={(e) => setNewItem({ ...newItem, itemImageUrl: e.target.value })}
+                    fullWidth
+                    required
+                  />
+                </Box>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setShowAddItemDialog(false)}>Cancel</Button>
+                <Button onClick={handleAddRegistryItem} variant="contained" disabled={!newItem.itemName.trim() || !newItem.itemUrl.trim() || !newItem.itemImageUrl.trim()}>
+                  Add Item
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        )}
 
         {/* Add Guest Dialog */}
         <Dialog open={showAddDialog} onClose={() => setShowAddDialog(false)} maxWidth="sm" fullWidth>
