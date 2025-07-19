@@ -39,16 +39,6 @@ interface RegistryItem {
   updatedAt: string;
 }
 
-interface RegistryPurchase {
-  id: string;
-  itemName: string;
-  itemUrl: string;
-  itemImageUrl: string;
-  purchaserName: string;
-  purchaserMessage?: string;
-  purchasedAt: string;
-}
-
 const RegistryPage = () => {
   const [items, setItems] = useState<RegistryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +60,7 @@ const RegistryPage = () => {
         const data = await response.json();
         setItems(data);
         setLoading(false);
-      } catch (err) {
+      } catch {
         setError('Failed to load registry data');
         setLoading(false);
       }
@@ -182,7 +172,7 @@ const RegistryPage = () => {
             Your presence is our present!
             <br />
             <br />
-            If you would still like to get us a gift, we've put together a list of things for all sorts of budgets, which you can see below!
+            If you would still like to get us a gift, we&apos;ve put together a list of things for all sorts of budgets, which you can see below!
           </Typography>
 
           {/* Registry Table */}

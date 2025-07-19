@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Typography, Box, Link } from '@mui/material';
-import { LocationOn, Phone, Language } from '@mui/icons-material';
 import PageFade from '../components/PageFade';
 
 const HotelsPage = () => {

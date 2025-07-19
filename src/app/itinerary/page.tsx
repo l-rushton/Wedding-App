@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, useTheme, Link, Fade } from '@mui/material';
+import { Container, Typography, Link, Fade } from '@mui/material';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineDot, TimelineContent, TimelineOppositeContent } from '@mui/lab';
-import SongSuggestionOverlay from '../components/SongSuggestionOverlay';
 
 const ItineraryPage = () => {
-  const theme = useTheme();
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
 
   const timelineItems = [
@@ -37,7 +35,7 @@ const ItineraryPage = () => {
         setVisibleItems(prev => [...prev, i]);
       }, i * animationDelay);
     }
-  }, []);
+  }, [timelineItems.length]);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 5, px: { xs: 2, sm: 4, md: 8 }, position: 'relative' }}>

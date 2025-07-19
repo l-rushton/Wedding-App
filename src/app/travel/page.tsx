@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Typography, Box, Paper, Link } from '@mui/material';
+import { Typography, Box, Link } from '@mui/material';
 import Map from '../components/Map';
 import PageFade from '../components/PageFade';
 

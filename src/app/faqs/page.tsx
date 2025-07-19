@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Typography, Box, TextField, Button, Paper, Alert } from '@mui/material';
-import { Email } from '@mui/icons-material';
 import emailjs from '@emailjs/browser';
 import PageFade from '../components/PageFade';
 
@@ -13,7 +12,6 @@ const FAQsPage = () => {
     question: ''
   });
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
 
   const faqs = [
     {
@@ -26,7 +24,7 @@ const FAQsPage = () => {
     },
     {
       question: "Dress code",
-      answer: "Dress to impress! We're going for an autumnal theme, so not a black tie affair. Think earthy tones!"
+      answer: "Dress to impress! We&apos;re going for an autumnal theme, so not a black tie affair. Think earthy tones!"
     },
     {
       question: "RSVP deadline",
@@ -36,7 +34,6 @@ const FAQsPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setSubmitted(true);
     try {
       await emailjs.send('service_04bnhgq', 'template_89eou4q', {
@@ -45,8 +42,7 @@ const FAQsPage = () => {
         message: formData.question,
       }, 'l6R3r-Ma4SfUu8wUs');
       setSubmitted(true);
-    } catch (error) {
-      setError('Failed to send message. Please try again or email us directly.');
+    } catch {
       // Still show success message for now
       setSubmitted(true);
     }
@@ -86,7 +82,7 @@ const FAQsPage = () => {
             
             {submitted ? (
               <Alert severity="success" sx={{ mb: 2 }}>
-                Thank you! We'll get back to you soon.
+                Thank you! We&apos;ll get back to you soon.
               </Alert>
             ) : (
               <form onSubmit={handleSubmit}>
@@ -148,12 +144,6 @@ const FAQsPage = () => {
                       },
                     }}
                   />
-                  
-                  {error && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                      {error}
-                    </Alert>
-                  )}
                   
                   <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                     <Button

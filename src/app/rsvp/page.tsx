@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
   Typography, 
@@ -14,7 +14,6 @@ import {
   Alert,
   Paper,
   CircularProgress,
-  Divider,
   Select,
   MenuItem,
   SelectChangeEvent,
@@ -28,7 +27,11 @@ interface Guest {
   rsvp?: boolean;
   dietaryReqs?: string;
   addressId?: string;
-  menuChoices?: any;
+  menuChoices?: {
+    appetiser?: string;
+    main?: string;
+    dessert?: string;
+  };
 }
 
 interface Address {
@@ -54,7 +57,7 @@ interface PersonRSVP {
   dietaryReqs: string;
 }
 
-const RSVPPage = () => {
+const RSVPPageContent = () => {
   const searchParams = useSearchParams();
   const inviteId = searchParams.get('id');
   
@@ -150,7 +153,7 @@ const RSVPPage = () => {
         
         setPeopleRSVP(initialRSVP);
         setLoading(false);
-      } catch (err) {
+      } catch {
         setError('Unable to load invitation details. Please contact us directly.');
         setLoading(false);
       }
@@ -247,7 +250,7 @@ const RSVPPage = () => {
       }
       
       setSubmitted(true);
-    } catch (err) {
+    } catch {
       setError('Failed to submit RSVP. Please try again.');
     } finally {
       setSubmitting(false);
@@ -326,7 +329,7 @@ const RSVPPage = () => {
               Thank you for your RSVP!
             </Typography>
             <Typography>
-              We've received your response and can't wait to celebrate with you on our special day.
+              We&apos;ve received your response and can&apos;t wait to celebrate with you on our special day.
             </Typography>
           </Alert>
         </Box>
@@ -411,7 +414,7 @@ const RSVPPage = () => {
                             }}
                           />
                         } 
-                        label="Yes, I'll be there!" 
+                        label="Yes, I&apos;ll be there!" 
                       />
                       <FormControlLabel 
                         value="no" 
@@ -624,6 +627,20 @@ const RSVPPage = () => {
         </Paper>
       </Box>
     </PageFade>
+  );
+};
+
+const RSVPPage = () => {
+  return (
+    <Suspense fallback={<PageFade><Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center',
+      justifyContent: 'center',
+      py: 8
+    }}><CircularProgress sx={{ mb: 2, color: 'secondary.main' }} /><Typography>Loading your invitation...</Typography></Box></PageFade>}>
+      <RSVPPageContent />
+    </Suspense>
   );
 };
 

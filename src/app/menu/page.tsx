@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Container, Typography, Box, useTheme, List, ListItem } from '@mui/material';
+import { Typography, Box, useTheme, List, ListItem } from '@mui/material';
 import PageFade from '../components/PageFade';
 
 const MenuPage = () => {

@@ -54,11 +54,6 @@ interface Guest {
   } | null;
 }
 
-interface Address {
-  id: string;
-  address: string;
-}
-
 interface RegistryPurchase {
   id: string;
   itemName: string;
