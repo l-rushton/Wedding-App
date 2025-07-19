@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Appetiser, MainCourse, Dessert } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { inviteId, peopleRSVP, guestData, isDirectAccess } = body;
+    const { peopleRSVP, isDirectAccess } = body;
 
     if (!peopleRSVP || !Array.isArray(peopleRSVP)) {
       return NextResponse.json({ message: 'Invalid RSVP data' }, { status: 400 });
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
             rsvp: attending === 'yes',
             dietaryReqs: attending === 'yes' ? dietaryReqs : null,
             addressId: undefined
-          } as any
+          }
         });
         currentGuestId = newGuest.id;
       } else if (guestId) {
@@ -49,15 +49,15 @@ export async function POST(request: NextRequest) {
         await prisma.menu.upsert({
           where: { guestId: currentGuestId },
           update: {
-            appetiser: appetiser as any,
-            main: main as any,
-            dessert: dessert as any
+            appetiser: appetiser as Appetiser,
+            main: main as MainCourse,
+            dessert: dessert as Dessert
           },
           create: {
             guestId: currentGuestId,
-            appetiser: appetiser as any,
-            main: main as any,
-            dessert: dessert as any
+            appetiser: appetiser as Appetiser,
+            main: main as MainCourse,
+            dessert: dessert as Dessert
           }
         });
       } else {

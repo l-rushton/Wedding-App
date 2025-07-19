@@ -3,6 +3,16 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+interface UpdateData {
+  status?: string;
+  purchaserName?: string | null;
+  purchaserMessage?: string | null;
+  purchasedAt?: string | null;
+  itemName?: string;
+  itemUrl?: string;
+  itemImageUrl?: string;
+}
+
 // DELETE - Remove a registry item
 export async function DELETE(
   request: NextRequest,
@@ -32,7 +42,7 @@ export async function PUT(
       return NextResponse.json({ message: 'Missing ID' }, { status: 400 });
     }
     const body = await request.json();
-    const updateData: any = {};
+    const updateData: UpdateData = {};
     if (body.status) updateData.status = body.status;
     if ('purchaserName' in body) updateData.purchaserName = body.purchaserName;
     if ('purchaserMessage' in body) updateData.purchaserMessage = body.purchaserMessage;

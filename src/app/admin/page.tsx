@@ -84,7 +84,6 @@ interface RegistryItem {
 
 const AdminPage = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
-  const [addresses, setAddresses] = useState<Address[]>([]);
   const [registryPurchases, setRegistryPurchases] = useState<RegistryPurchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -102,7 +101,6 @@ const AdminPage = () => {
   const [registryItems, setRegistryItems] = useState<RegistryItem[]>([]);
   const [showAddItemDialog, setShowAddItemDialog] = useState(false);
   const [newItem, setNewItem] = useState({ itemName: '', itemUrl: '', itemImageUrl: '' });
-  const [itemLoading, setItemLoading] = useState(false);
 
   const ADMIN_PASSWORD = 'wedding2025'; // You should change this to a secure password
 
@@ -110,7 +108,6 @@ const AdminPage = () => {
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       fetchGuests();
-      fetchAddresses();
       fetchRegistryPurchases();
     } else {
       setError('Incorrect password');
@@ -126,21 +123,9 @@ const AdminPage = () => {
       const data = await response.json();
       setGuests(data);
       setLoading(false);
-    } catch (err) {
+    } catch {
       setError('Failed to load guest data');
       setLoading(false);
-    }
-  };
-
-  const fetchAddresses = async () => {
-    try {
-      const response = await fetch('/api/admin/addresses');
-      if (response.ok) {
-        const data = await response.json();
-        setAddresses(data);
-      }
-    } catch (err) {
-      console.error('Failed to fetch addresses:', err);
     }
   };
 
@@ -151,22 +136,20 @@ const AdminPage = () => {
         const data = await response.json();
         setRegistryPurchases(data);
       }
-    } catch (err) {
-      console.error('Failed to fetch registry purchases:', err);
+    } catch {
+      console.error('Failed to fetch registry purchases');
     }
   };
 
   const fetchRegistryItems = async () => {
     try {
-      setItemLoading(true);
       const response = await fetch('/api/registry/items?all=1');
       if (response.ok) {
         const data = await response.json();
         setRegistryItems(data);
       }
-      setItemLoading(false);
-    } catch (err) {
-      setItemLoading(false);
+    } catch {
+      console.error('Failed to fetch registry items');
     }
   };
 
@@ -221,7 +204,7 @@ const AdminPage = () => {
       setShowAddDialog(false);
       setNewGuest({ name: '', address: '' });
       setSnackbar({ open: true, message: 'Guest added successfully', severity: 'success' });
-    } catch (err) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to add guest', severity: 'error' });
     }
   };
@@ -247,7 +230,7 @@ const AdminPage = () => {
       setShowEditDialog(false);
       setEditingGuest(null);
       setSnackbar({ open: true, message: 'Guest updated successfully', severity: 'success' });
-    } catch (err) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to update guest', severity: 'error' });
     }
   };
@@ -266,7 +249,7 @@ const AdminPage = () => {
 
       await fetchGuests();
       setSnackbar({ open: true, message: 'Guest deleted successfully', severity: 'success' });
-    } catch (err) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to delete guest', severity: 'error' });
     }
   };
@@ -278,7 +261,7 @@ const AdminPage = () => {
       const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
       const guestData = lines.slice(1).map(line => {
         const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
-        const guest: any = {};
+        const guest: Record<string, string> = {};
         headers.forEach((header, index) => {
           guest[header.toLowerCase()] = values[index] || '';
         });
@@ -304,7 +287,7 @@ const AdminPage = () => {
         message: `Bulk import completed: ${result.results.created} created, ${result.results.updated} updated`, 
         severity: 'success' 
       });
-    } catch (err) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to import guests', severity: 'error' });
     }
   };
@@ -323,7 +306,7 @@ const AdminPage = () => {
 
       await fetchRegistryPurchases();
       setSnackbar({ open: true, message: 'Purchase record removed successfully', severity: 'success' });
-    } catch (err) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to remove purchase record', severity: 'error' });
     }
   };
@@ -340,7 +323,7 @@ const AdminPage = () => {
       setShowAddItemDialog(false);
       setNewItem({ itemName: '', itemUrl: '', itemImageUrl: '' });
       setSnackbar({ open: true, message: 'Item added successfully', severity: 'success' });
-    } catch (err) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to add item', severity: 'error' });
     }
   };
@@ -352,7 +335,7 @@ const AdminPage = () => {
       if (!response.ok) throw new Error('Failed to delete item');
       await fetchRegistryItems();
       setSnackbar({ open: true, message: 'Item deleted successfully', severity: 'success' });
-    } catch (err) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to delete item', severity: 'error' });
     }
   };
@@ -372,7 +355,7 @@ const AdminPage = () => {
       if (!response.ok) throw new Error('Failed to update item');
       await fetchRegistryItems();
       setSnackbar({ open: true, message: 'Item status updated', severity: 'success' });
-    } catch (err) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to update item', severity: 'error' });
     }
   };
@@ -390,7 +373,6 @@ const AdminPage = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchGuests();
-      fetchAddresses();
       fetchRegistryPurchases();
       fetchRegistryItems();
     }
