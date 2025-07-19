@@ -97,7 +97,7 @@ const ItineraryPage = () => {
                       fontSize: { xs: '0.875rem', md: '1.1rem' }
                     }}
                   >
-                    Got a song suggestion?{' '}
+                    Got a first dance song suggestion?{' '}
                     <Link
                       href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                       target="_blank"
