@@ -10,6 +10,10 @@ const Map = () => {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS;
   const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodedAddress}`;
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <Box sx={{ width: '100%', mt: 4 }}>
