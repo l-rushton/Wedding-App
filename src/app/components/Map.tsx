@@ -1,9 +1,13 @@
+'use client';
+
 import { Box, Link, Paper } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 const Map = () => {
+  const [isClient, setIsClient] = useState(false);
   const venue = "Ufton Court, Green Lane, Reading RG7 1JG";
   const encodedAddress = encodeURIComponent(venue);
-  const apiKey = process.env.GOOGLE_MAPS;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS;
   const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodedAddress}`;
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
 
@@ -18,18 +22,20 @@ const Map = () => {
           overflow: 'hidden'
         }}
       >
-        <Box
-          component="iframe"
-          src={mapUrl}
-          sx={{
-            border: 0,
-            width: '100%',
-            height: '100%'
-          }}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
+        {isClient && (
+          <Box
+            component="iframe"
+            src={mapUrl}
+            sx={{
+              border: 0,
+              width: '100%',
+              height: '100%'
+            }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        )}
       </Paper>
       <Link 
         href={directionsUrl}
