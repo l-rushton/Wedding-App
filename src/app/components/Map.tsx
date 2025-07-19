@@ -3,7 +3,7 @@ import { Box, Link, Paper } from '@mui/material';
 const Map = () => {
   const venue = "Ufton Court, Green Lane, Reading RG7 1JG";
   const encodedAddress = encodeURIComponent(venue);
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.GOOGLE_MAPS;
   const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodedAddress}`;
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
 
