@@ -51,12 +51,12 @@ const MenuPage = () => {
                     }}>
                         <ListItem>
                             <Typography variant="body1" sx={{ width: '100%' }}>
-                                Salt & pepper wild mushrooms with garlic, fresh lime leaf & sweet chilli sauce
+                                Salt & pepper wild mushrooms with garlic, fresh lime leaf, sweet chilli sauce (ve) (gf)
                             </Typography>
                         </ListItem>
                         <ListItem>
                             <Typography variant="body1" sx={{ width: '100%' }}>
-                                Thai cod fishcakes with fragrant herb salad & lemongrass dressing
+                                Thai cod fishcakes, zingy herb salad, lime, lemongrass dressing (gf)
                             </Typography>
                         </ListItem>
                     </List>
@@ -93,12 +93,12 @@ const MenuPage = () => {
                     }}>
                         <ListItem>
                             <Typography variant="body1" sx={{ width: '100%' }}>
-                                Thai green curry with tender chicken
+                                Chicken Thai green curry (gf)
                             </Typography>
                         </ListItem>
                         <ListItem>
                             <Typography variant="body1" sx={{ width: '100%' }}>
-                                Massaman curry with sweet potato & aromatic spices (ve) (n)
+                                Sweet potato Massaman curry (ve) (n) (gf)
                             </Typography>
                         </ListItem>
                         <ListItem>
@@ -142,7 +142,7 @@ const MenuPage = () => {
                         </ListItem>
                         <ListItem>
                             <Typography variant="body1" sx={{ width: '100%' }}>
-                                Dark chocolate & avocado mousse (ve)
+                                Dark chocolate & avocado mousse (ve) (gf)
                             </Typography>
                         </ListItem>
                     </List>

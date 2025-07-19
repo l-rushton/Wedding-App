@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 // DELETE - Remove a registry item
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     if (!id) {
       return NextResponse.json({ message: 'Missing ID' }, { status: 400 });
     }
@@ -24,10 +24,10 @@ export async function DELETE(
 // PUT - Update a registry item (status, name, url, image, etc.)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     if (!id) {
       return NextResponse.json({ message: 'Missing ID' }, { status: 400 });
     }

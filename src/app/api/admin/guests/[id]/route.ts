@@ -6,11 +6,12 @@ const prisma = new PrismaClient();
 // GET - Fetch single guest
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const guest = await prisma.guest.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         address: true,
         menuChoices: true,
@@ -31,9 +32,10 @@ export async function GET(
 // PUT - Update guest
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { name, address, addressId } = body;
 
@@ -56,7 +58,7 @@ export async function PUT(
     }
 
     const updatedGuest = await prisma.guest.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         name,
         addressId: finalAddressId || null,
@@ -77,17 +79,18 @@ export async function PUT(
 // DELETE - Delete guest
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Delete menu choices first (due to foreign key constraint)
     await prisma.menu.deleteMany({
-      where: { guestId: params.id }
+      where: { guestId: id }
     });
 
     // Delete the guest
     await prisma.guest.delete({
-      where: { id: params.id }
+      where: { id: id }
     });
 
     return NextResponse.json({ message: 'Guest deleted successfully' });
