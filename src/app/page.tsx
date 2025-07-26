@@ -34,7 +34,7 @@ export default function Home() {
               fontStyle: 'italic'
             }} 
           >
-            We&apos;re getting married!
+            We're getting married!
           </Typography>
         </Box>
 
@@ -110,7 +110,7 @@ export default function Home() {
             overflow: 'hidden'
           }}>
             <Image 
-              src="/images/izzylouisbench.jpg" 
+              src="/images/izzyandlouis_ufton.jpg" 
               alt="Izzy & Louis at Ufton Court" 
               fill={true} 
               style={{ objectFit: 'contain' }} 

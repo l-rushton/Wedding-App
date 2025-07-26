@@ -31,6 +31,7 @@ const Header: React.FC = () => {
     { label: 'Travel Advice', path: '/travel' },
     { label: 'Hotels', path: '/hotels' },
     { label: 'FAQs', path: '/faqs' },
+    { label: 'Photos', path: '/photos' },
     { label: 'RSVP', path: '/rsvp' }
   ];
 

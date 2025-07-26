@@ -10,15 +10,14 @@ const ItineraryPage = () => {
   const timelineItems = [
     { time: "12:00", content: "Arrival" },
     { time: "12:30", content: "Ceremony" },
-    { time: "13:15", content: "Reception" },
-    { time: "14:00", content: "Wedding Breakfast" },
-    { time: "15:00", content: "Speeches" },
-    { time: "15:30", content: "Cutting the Cake" },
-    { time: "16:00", content: "Band" },
+    { time: "13:15", content: "Drinks & Canapés" },
+    { time: "14:30", content: "Wedding Breakfast" },
+    { time: "15:45", content: "Speeches" },
+    { time: "16:30", content: "Cutting the Cake" },
+    { time: "17:00", content: "Party time" },
     { time: "17:15", content: "First Dance" },
-    { time: "17:30", content: "Party time" },
     { time: "18:30", content: "Pizza truck arrival" },
-    { time: "23:30", content: "Carriages" }
+    { time: "23:45", content: "Carriages" }
   ];
 
   useEffect(() => {
@@ -99,7 +98,7 @@ const ItineraryPage = () => {
                   >
                     Got a first dance song suggestion?{' '}
                     <Link
-                      href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      href="https://www.yout-ube.com/watch?v=dQw4w9WgXcQ"
                       target="_blank"
                       rel="noopener noreferrer"
                       sx={{
