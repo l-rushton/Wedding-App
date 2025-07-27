@@ -18,6 +18,11 @@ const eslintConfig = [
       ".next/**",
       "out/**"
     ]
+  },
+  {
+    rules: {
+      "react/no-unescaped-entities": "off"
+    }
   }
 ];
 
