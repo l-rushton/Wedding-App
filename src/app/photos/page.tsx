@@ -9,16 +9,12 @@ import {
   CardActionArea,
   Dialog,
   DialogContent,
-  IconButton,
-  useTheme,
-  useMediaQuery
+  IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Image from 'next/image';
 
 const PhotosPage: React.FC = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   // Array of image data
