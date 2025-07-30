@@ -329,7 +329,7 @@ const RSVPPageContent = () => {
               Thank you for your RSVP!
             </Typography>
             <Typography>
-              We&apos;ve received your response and can&apos;t wait to celebrate with you on our special day.
+              We've received your response and can't wait to celebrate with you on our special day.
             </Typography>
           </Alert>
         </Box>
@@ -347,7 +347,7 @@ const RSVPPageContent = () => {
           color: 'secondary.main',
           mb: 4
         }}>
-          Let us know if you can make it!
+          Let us know if you can make it.
         </Typography>
 
         <Paper elevation={1} sx={{ 
@@ -414,7 +414,7 @@ const RSVPPageContent = () => {
                             }}
                           />
                         } 
-                        label="Yes, I&apos;ll be there!" 
+                        label="Yes, I'll be there!" 
                       />
                       <FormControlLabel 
                         value="no" 

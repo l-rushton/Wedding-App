@@ -15,7 +15,7 @@ const MenuPage = () => {
                         color: 'black',
                         fontSize: '1.25rem'
                     }}>
-                    Please make your choices by scanning the QR code in your invitation
+                    Please make your choices by scanning the QR code in your invitation, or by navigating to the RSVP page.
                 </Typography>
 
                 <Box sx={{ mb: 0 }}>

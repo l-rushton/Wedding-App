@@ -172,7 +172,7 @@ const RegistryPage = () => {
             Your presence is our present!
             <br />
             <br />
-            If you would still like to get us a gift, we&apos;ve put together a list of things for all sorts of budgets, which you can see below!
+            If you would still like to get us a gift, we've put together a list of things for all sorts of budgets, which you can see below.
           </Typography>
 
           {/* Registry Table */}

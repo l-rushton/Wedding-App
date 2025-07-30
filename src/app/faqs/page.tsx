@@ -20,15 +20,15 @@ const FAQsPage = () => {
     },
     {
       question: "Are kids welcome?",
-      answer: "We kindly ask that you leave the little ones at home. Please reach out if you have any questions!"
+      answer: "We kindly ask that you leave the little ones at home. Please reach out if you have any questions."
     },
     {
       question: "Dress code",
-      answer: "Dress to impress! We&apos;re going for an autumnal theme, so not a black tie affair. Think earthy tones!"
+      answer: "Dress to impress. We're going for an autumnal theme, so not a black tie affair. Think earthy tones!"
     },
     {
       question: "RSVP deadline",
-      answer: "Please RSVP by the 18th of August. You can RSVP by scanning the QR code on your invitation with your phone, or by going to the RSVP page on this website."
+      answer: "Please RSVP by the 10th of September. You can RSVP by scanning the QR code on your invitation with your phone, or by going to the RSVP page on this website."
     }
   ];
 
@@ -82,7 +82,7 @@ const FAQsPage = () => {
             
             {submitted ? (
               <Alert severity="success" sx={{ mb: 2 }}>
-                Thank you! We&apos;ll get back to you soon.
+                Thank you! We'll get back to you soon.
               </Alert>
             ) : (
               <form onSubmit={handleSubmit}>

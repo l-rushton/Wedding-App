@@ -29,7 +29,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { guests } = body;
 
+    console.log('Received guest data:', guests);
+
     if (!guests || !Array.isArray(guests)) {
+      console.error('Invalid guest data:', guests);
       return NextResponse.json({ message: 'Invalid guest data' }, { status: 400 });
     }
 
@@ -90,13 +93,20 @@ export async function POST(request: NextRequest) {
           results.updated++;
         } else {
           // Create new guest
-          await prisma.guest.create({
+          const newGuest = await prisma.guest.create({
             data: {
               name,
               addressId: finalAddressId || null,
             }
           });
           results.created++;
+          
+          // Log the QR code URL for this guest/address
+          if (finalAddressId) {
+            console.log(`QR Code for ${name}: /rsvp?id=${finalAddressId}`);
+          } else {
+            console.log(`Individual QR Code for ${name}: /rsvp?id=${newGuest.id}`);
+          }
         }
       } catch (error) {
         console.error('Error processing guest:', guestData, error);

@@ -97,15 +97,28 @@ const AdminPage = () => {
   const [showAddItemDialog, setShowAddItemDialog] = useState(false);
   const [newItem, setNewItem] = useState({ itemName: '', itemUrl: '', itemImageUrl: '' });
 
-  const ADMIN_PASSWORD = 'wedding2025'; // You should change this to a secure password
 
-  const handleLogin = () => {
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      fetchGuests();
-      fetchRegistryPurchases();
-    } else {
-      setError('Incorrect password');
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        setPassword('');
+        setError(null);
+        fetchGuests();
+        fetchRegistryPurchases();
+      } else {
+        setError('Incorrect password');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Login failed. Please try again.');
     }
   };
 
@@ -253,8 +266,30 @@ const AdminPage = () => {
     try {
       // Parse CSV data
       const lines = bulkImportData.trim().split('\n');
-      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-      const guestData = lines.slice(1).map(line => {
+      
+      // If no header row is provided, assume first row is data and use default headers
+      let headers: string[];
+      let dataLines: string[];
+      
+      if (lines.length === 0) {
+        throw new Error('No data provided');
+      }
+      
+      // Check if first line looks like headers (contains 'name' or 'address')
+      const firstLine = lines[0].toLowerCase();
+      if (firstLine.includes('name') || firstLine.includes('address')) {
+        headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        dataLines = lines.slice(1);
+      } else {
+        // No headers provided, use default headers
+        headers = ['name', 'address'];
+        dataLines = lines;
+      }
+      
+      console.log('Headers:', headers);
+      console.log('Data lines:', dataLines);
+      
+      const guestData = dataLines.map(line => {
         const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
         const guest: Record<string, string> = {};
         headers.forEach((header, index) => {
@@ -263,6 +298,8 @@ const AdminPage = () => {
         return guest;
       });
 
+      console.log('Parsed guest data:', guestData);
+
       const response = await fetch('/api/admin/guests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -270,20 +307,24 @@ const AdminPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to import guests');
+        const errorText = await response.text();
+        console.error('Import failed:', errorText);
+        throw new Error(`Failed to import guests: ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('Import result:', result);
       await fetchGuests();
       setShowBulkImportDialog(false);
       setBulkImportData('');
       setSnackbar({ 
         open: true, 
-        message: `Bulk import completed: ${result.results.created} created, ${result.results.updated} updated`, 
+        message: `Bulk import completed: ${result.results.created} created, ${result.results.updated} updated. Check console for QR code URLs.`, 
         severity: 'success' 
       });
-    } catch {
-      setSnackbar({ open: true, message: 'Failed to import guests', severity: 'error' });
+    } catch (error) {
+      console.error('Import error:', error);
+      setSnackbar({ open: true, message: `Failed to import guests: ${error}`, severity: 'error' });
     }
   };
 
@@ -531,17 +572,31 @@ const AdminPage = () => {
                 </FormControl>
 
                 <Button 
-                  variant="outlined" 
+                  variant="contained" 
                   startIcon={<AddIcon />}
                   onClick={() => setShowAddDialog(true)}
+                  sx={{ 
+                    bgcolor: 'secondary.main',
+                    color: 'white',
+                    '&:hover': {
+                      bgcolor: 'secondary.dark'
+                    }
+                  }}
                 >
                   Add Guest
                 </Button>
 
                 <Button 
-                  variant="outlined" 
+                  variant="contained" 
                   startIcon={<UploadIcon />}
                   onClick={() => setShowBulkImportDialog(true)}
+                  sx={{ 
+                    bgcolor: 'secondary.main',
+                    color: 'white',
+                    '&:hover': {
+                      bgcolor: 'secondary.dark'
+                    }
+                  }}
                 >
                   Bulk Import
                 </Button>
