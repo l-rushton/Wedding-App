@@ -16,11 +16,11 @@ const FAQsPage = () => {
   const faqs = [
     {
         question: "What time should I arrive?",
-        answer: "Please arrive by 12:15pm."
+        answer: "Please arrive by 12:00pm."
     },
     {
       question: "Are kids welcome?",
-      answer: "We kindly ask that you leave the little ones at home. Please reach out if you have any questions."
+      answer: "We've decided not to invite children to our wedding."
     },
     {
       question: "Dress code",

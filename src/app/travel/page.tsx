@@ -30,7 +30,7 @@ const TravelPage = () => {
             By Train
           </Typography>
           <Typography paragraph>
-            The nearest train station is Mortimer, which is a 10 minute drive from the venue. We recommend booking a taxi in advance for the journey from the station to Ufton Court, as it would take an hour and a half to walk!
+            The nearest train station is Mortimer, which is a 10 minute drive from the venue. We recommend booking a taxi in advance for the journey from the station to Ufton Court, as it would take an hour and a half to walk.
           </Typography>
         </Box>
 
