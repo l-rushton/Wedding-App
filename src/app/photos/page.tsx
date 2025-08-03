@@ -5,10 +5,7 @@ import {
   Box, 
   Typography, 
   Card, 
-  CardMedia, 
-  CardActionArea,
   Dialog,
-  DialogContent,
   IconButton,
   CircularProgress,
   Skeleton
