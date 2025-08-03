@@ -34,7 +34,7 @@ export default function Home() {
               fontStyle: 'italic'
             }} 
           >
-            We're getting married!
+            We're getting married
           </Typography>
         </Box>
 

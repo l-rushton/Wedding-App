@@ -35,7 +35,7 @@ const SongSuggestionOverlay = () => {
         >
           Click here
         </Link>
-        {' '}to submit!
+        {' '}to submit
       </Typography>
       <Box
         sx={{

@@ -11,12 +11,11 @@ const ItineraryPage = () => {
     { time: "12:00", content: "Arrival" },
     { time: "12:30", content: "Ceremony" },
     { time: "13:15", content: "Drinks & Canapés" },
-    { time: "14:30", content: "Wedding Breakfast" },
-    { time: "15:45", content: "Speeches" },
-    { time: "16:30", content: "Cutting the Cake" },
-    { time: "17:00", content: "Party time" },
-    { time: "17:15", content: "First Dance" },
-    { time: "18:30", content: "Pizza truck arrival" },
+    { time: "15:00", content: "Wedding Breakfast" },
+    { time: "16:00", content: "Speeches" },
+    { time: "17:30", content: "Cutting the Cake" },
+    { time: "17:45", content: "First Dance" },
+    { time: "19:30", content: "Pizza truck arrival" },
     { time: "23:45", content: "Carriages" }
   ];
 
@@ -111,7 +110,7 @@ const ItineraryPage = () => {
                     >
                       Click here
                     </Link>
-                    {' '}to submit!
+                    {' '}to submit
                   </Typography>
                 )}
               </TimelineContent>
