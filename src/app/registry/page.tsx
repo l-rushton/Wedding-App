@@ -169,10 +169,12 @@ const RegistryPage = () => {
               color: 'black',
               fontSize: '1.25rem'
             }}>
-            Your presence is our present!
+            Your presence is our present.
             <br />
             <br />
             If you would still like to get us a gift, we've put together a list of things for all sorts of budgets, which you can see below.
+            <br />
+            If you have bought an item from the list, please check the box next to the item to say you've purchased it.
           </Typography>
 
           {/* Registry Table */}

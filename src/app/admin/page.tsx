@@ -404,6 +404,32 @@ const AdminPage = () => {
     return { total, attending, notAttending, pending };
   };
 
+  const getRSVPUrl = (guest: Guest) => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    // If guest has an address, use address ID for group RSVP
+    if (guest.addressId) {
+      return `${baseUrl}/rsvp?id=${guest.addressId}`;
+    }
+    // Otherwise use individual guest ID
+    return `${baseUrl}/rsvp?id=${guest.id}`;
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setSnackbar({ 
+        open: true, 
+        message: 'RSVP URL copied to clipboard!', 
+        severity: 'success' 
+      });
+    }).catch(() => {
+      setSnackbar({ 
+        open: true, 
+        message: 'Failed to copy URL', 
+        severity: 'error' 
+      });
+    });
+  };
+
   const stats = getAttendanceStats();
 
   useEffect(() => {
@@ -623,6 +649,7 @@ const AdminPage = () => {
                     <TableCell sx={{ fontWeight: 'bold' }}>Main</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Dessert</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Dietary Requirements</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>RSVP URL</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -645,6 +672,33 @@ const AdminPage = () => {
                       <TableCell>{guest.menuChoices?.dessert || '-'}</TableCell>
                       <TableCell sx={{ maxWidth: 200 }}>
                         {guest.dietaryReqs || '-'}
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              fontFamily: 'monospace',
+                              fontSize: '0.75rem',
+                              wordBreak: 'break-all',
+                              maxWidth: '200px'
+                            }}
+                          >
+                            {getRSVPUrl(guest)}
+                          </Typography>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => copyToClipboard(getRSVPUrl(guest))}
+                            sx={{ 
+                              fontSize: '0.7rem',
+                              py: 0.5,
+                              px: 1
+                            }}
+                          >
+                            Copy URL
+                          </Button>
+                        </Box>
                       </TableCell>
                       <TableCell>
                         <Box sx={{ display: 'flex', gap: 1 }}>
