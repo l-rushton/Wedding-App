@@ -88,19 +88,18 @@ const RSVPPageContent = () => {
   }, []);
 
   // Menu options with dietary information
-  // TODO: UPDATE DIETARY REQUIREMENTS
   const menuOptions = {
     appetisers: [
-      { value: 'mushrooms', label: 'Salt & pepper wild mushrooms', dietary: 'Vegan' },
-      { value: 'fishcakes', label: 'Thai cod fishcakes' }
+      { value: 'mushrooms', label: 'Salt & pepper wild mushrooms with garlic, fresh lime leaf, sweet chilli sauce', dietary: 'Vegan, Gluten-free' },
+      { value: 'fishcakes', label: 'Thai cod fishcakes, zingy herb salad, lime, lemongrass dressing', dietary: 'Gluten-free' }
     ],
     mains: [
-      { value: 'green', label: 'Green curry', dietary: 'Vegetarian, Vegan, Gluten-free' },
-      { value: 'massaman', label: 'Massaman curry', dietary: 'Contains nuts, Gluten-free' }
+      { value: 'green', label: 'Chicken Thai green curry', dietary: 'Gluten-free' },
+      { value: 'massaman', label: 'Sweet potato Massaman curry', dietary: 'Vegan, Contains nuts, Gluten-free' }
     ],
     desserts: [
-      { value: 'lemonTart', label: 'Lemon tart', dietary: 'Vegetarian, Contains gluten' },
-      { value: 'chocolateMousse', label: 'Chocolate mousse', dietary: 'Vegan, Gluten-free' }
+      { value: 'lemonTart', label: 'Lemon tart with lemon meringue ice cream', dietary: 'Vegetarian' },
+      { value: 'chocolateMousse', label: 'Dark chocolate & avocado mousse', dietary: 'Vegan, Gluten-free' }
     ]
   };
 
