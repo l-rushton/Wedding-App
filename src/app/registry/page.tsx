@@ -4,14 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Typography, 
   Box, 
-  Paper,
   Container,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Link,
   Checkbox,
   Dialog,
@@ -20,9 +13,11 @@ import {
   DialogActions,
   Button,
   TextField,
-  FormControlLabel,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Card,
+  CardContent,
+  CardMedia
 } from '@mui/material';
 import PageFade from '../components/PageFade';
 
@@ -177,120 +172,100 @@ const RegistryPage = () => {
             If you have bought an item from the list, please check the box next to the item to say you've purchased it.
           </Typography>
 
-          {/* Registry Table */}
-          <Paper 
-            elevation={1} 
-            sx={{ 
-              p: 4,
-              bgcolor: 'rgba(255, 255, 255, 0.8)',
-              mt: 4
-            }}
-          >
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ 
-                      color: 'secondary.main', 
-                      fontWeight: 'bold',
-                      fontSize: '1.1rem'
-                    }}>
-                      Purchased
-                    </TableCell>
-                    <TableCell sx={{ 
-                      color: 'secondary.main', 
-                      fontWeight: 'bold',
-                      fontSize: '1.1rem'
-                    }}>
-                      Item
-                    </TableCell>
-                    <TableCell sx={{ 
-                      color: 'secondary.main', 
-                      fontWeight: 'bold',
-                      fontSize: '1.1rem'
-                    }}>
-                      Name
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {items.map((item, index) => (
-                    <TableRow 
-                      key={item.id} 
-                      sx={{ 
-                        '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' },
-                        opacity: item.status === 'purchased' ? 0.6 : 1
+          {/* Registry Items Grid */}
+          <Box sx={{ mt: 4 }}>
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+              gap: 3
+            }}>
+              {items.map((item, index) => (
+                <Card 
+                  key={item.id}
+                  sx={{ 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    opacity: item.status === 'purchased' ? 0.6 : 1,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: 3
+                    }
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={item.itemImageUrl}
+                    alt={item.itemName}
+                    sx={{
+                      objectFit: 'cover'
+                    }}
+                  />
+                  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                      <Typography 
+                        variant="h6" 
+                        component="h3" 
+                        sx={{ 
+                          fontWeight: 'bold',
+                          color: 'secondary.main',
+                          flex: 1,
+                          mr: 1
+                        }}
+                      >
+                        {item.itemName}
+                      </Typography>
+                      <Checkbox
+                        checked={item.status === 'purchased'}
+                        onChange={() => handleCheckboxChange(index)}
+                        disabled={item.status === 'purchased'}
+                        sx={{
+                          color: 'secondary.main',
+                          '&.Mui-checked': {
+                            color: 'secondary.main',
+                          },
+                        }}
+                      />
+                    </Box>
+                    
+                    <Link
+                      href={item.itemUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{
+                        color: 'secondary.main',
+                        textDecoration: 'none',
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                        '&:hover': {
+                          textDecoration: 'underline',
+                          color: 'secondary.dark'
+                        },
+                        mt: 'auto'
                       }}
                     >
-                      <TableCell sx={{ width: '100px' }}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={item.status === 'purchased'}
-                              onChange={() => handleCheckboxChange(index)}
-                              disabled={item.status === 'purchased'}
-                              sx={{
-                                color: 'secondary.main',
-                                '&.Mui-checked': {
-                                  color: 'secondary.main',
-                                },
-                              }}
-                            />
-                          }
-                          label=""
-                        />
-                      </TableCell>
-                      <TableCell sx={{ width: '120px' }}>
-                        <Box
-                          component="img"
-                          src={item.itemImageUrl}
-                          alt={item.itemName}
-                          sx={{
-                            width: '100px',
-                            height: '100px',
-                            objectFit: 'cover',
-                            borderRadius: 1,
-                            border: '1px solid #e0e0e0'
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Link
-                          href={item.itemUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{
-                            color: 'secondary.main',
-                            textDecoration: 'none',
-                            fontWeight: 'bold',
-                            fontSize: '1.1rem',
-                            '&:hover': {
-                              textDecoration: 'underline',
-                              color: 'secondary.dark'
-                            }
-                          }}
-                        >
-                          {item.itemName}
-                        </Link>
-                        {item.status === 'purchased' && item.purchaserName && (
-                          <Typography 
-                            variant="caption" 
-                            sx={{ 
-                              display: 'block',
-                              color: 'text.secondary',
-                              mt: 1
-                            }}
-                          >
-                            Purchased by: {item.purchaserName}
-                          </Typography>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                      View Item →
+                    </Link>
+                    
+                    {item.status === 'purchased' && item.purchaserName && (
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          color: 'text.secondary',
+                          mt: 1,
+                          fontStyle: 'italic'
+                        }}
+                      >
+                        Purchased by: {item.purchaserName}
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          </Box>
 
           {/* Purchase Dialog */}
           <Dialog 
