@@ -44,7 +44,7 @@ const RegistryPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch available registry items from database
+  // Fetch all registry items from database
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -65,6 +65,10 @@ const RegistryPage = () => {
   }, []);
 
   const handleCheckboxChange = (index: number) => {
+    const item = items[index];
+    if (item.status === 'purchased') {
+      return; // Don't open dialog for already purchased items
+    }
     setSelectedItemIndex(index);
     setDialogOpen(true);
   };
@@ -104,8 +108,15 @@ const RegistryPage = () => {
         throw new Error(errorData.message || 'Failed to mark item as purchased');
       }
       
-      // Remove the purchased item from the list
-      const updatedItems = items.filter((_, i) => i !== selectedItemIndex);
+      // Update the item status in the local state instead of removing it
+      const updatedItems = [...items];
+      updatedItems[selectedItemIndex] = {
+        ...updatedItems[selectedItemIndex],
+        status: 'purchased',
+        purchaserName,
+        purchaserMessage,
+        purchasedAt: new Date().toISOString()
+      };
       setItems(updatedItems);
       
       handleDialogClose();
@@ -189,8 +200,8 @@ const RegistryPage = () => {
                     opacity: item.status === 'purchased' ? 0.6 : 1,
                     transition: 'all 0.3s ease',
                     '&:hover': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: 3
+                      transform: item.status === 'purchased' ? 'none' : 'translateY(-2px)',
+                      boxShadow: item.status === 'purchased' ? 1 : 3
                     }
                   }}
                 >
@@ -248,19 +259,6 @@ const RegistryPage = () => {
                     >
                       View Item →
                     </Link>
-                    
-                    {item.status === 'purchased' && item.purchaserName && (
-                      <Typography 
-                        variant="caption" 
-                        sx={{ 
-                          color: 'text.secondary',
-                          mt: 1,
-                          fontStyle: 'italic'
-                        }}
-                      >
-                        Purchased by: {item.purchaserName}
-                      </Typography>
-                    )}
                   </CardContent>
                 </Card>
               ))}

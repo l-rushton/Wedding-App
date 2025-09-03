@@ -3,13 +3,10 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// GET - Fetch all available registry items (not purchased)
+// GET - Fetch all registry items (both available and purchased)
 export async function GET() {
   try {
     const items = await prisma.registryPurchase.findMany({
-      where: {
-        status: 'available'
-      },
       orderBy: {
         createdAt: 'asc',
       },
