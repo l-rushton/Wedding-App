@@ -190,7 +190,14 @@ const RegistryPage = () => {
               gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
               gap: 3
             }}>
-              {items.map((item, index) => (
+              {items
+                .sort((a, b) => {
+                  // Available items first, then purchased items
+                  if (a.status === 'available' && b.status === 'purchased') return -1;
+                  if (a.status === 'purchased' && b.status === 'available') return 1;
+                  return 0;
+                })
+                .map((item, index) => (
                 <Card 
                   key={item.id}
                   sx={{ 
