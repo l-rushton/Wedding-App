@@ -72,7 +72,7 @@ const TravelPage = () => {
             Berkshire
           </Typography>
           <Typography gutterBottom>
-            RG7 1JG
+              RG7 4HD
           </Typography>
         </Box>
         <Map />
