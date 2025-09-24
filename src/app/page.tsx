@@ -74,7 +74,7 @@ export default function Home() {
                   Berkshire
                 </Typography>
                 <Typography variant="h5" sx={{ color: 'secondary.main' }}>
-                  RG7 1JG
+                  RG7 4HD
                 </Typography>
               </Box>
               
