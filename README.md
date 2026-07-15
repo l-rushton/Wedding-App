@@ -8,7 +8,7 @@
 
 A full-stack wedding website designed and built for our guests. It brings the practical details, personalised invitations, RSVPs, menu selections, gift registry, and guest management into one elegant, mobile-friendly experience.
 
-# Check it out at [here](https://izzyandlouiswedding.com)
+# Check it out [here](https://izzyandlouiswedding.com)
 
 ![Izzy and Louis at Ufton Court](public/images/izzyandlouis_ufton.jpg)
 
