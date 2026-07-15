@@ -1,36 +1,133 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Izzy & Louis — Wedding Website
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Material UI](https://img.shields.io/badge/Material_UI-7-007FFF?logo=mui&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma&logoColor=white)
 
-First, run the development server:
+A full-stack wedding website designed and built for our guests. It brings the practical details, personalised invitations, RSVPs, menu selections, gift registry, and guest management into one elegant, mobile-friendly experience.
+
+![Izzy and Louis at Ufton Court](public/images/izzyandlouis_ufton.jpg)
+
+## Highlights
+
+- **Personalised RSVPs** — invitation links can identify an individual guest or an entire household.
+- **Menu and dietary choices** — attending guests select each course and can add dietary requirements.
+- **Guest dashboard** — add, edit, delete, filter, and bulk-import guests from an admin view.
+- **CSV exports** — download RSVP and menu data for easy venue coordination.
+- **Gift registry** — manage registry items and prevent already-purchased gifts from being selected twice.
+- **Guest information hub** — itinerary, menu, hotels, travel advice, embedded directions, and FAQs.
+- **Responsive design** — adaptive navigation and layouts for phones, tablets, and desktops.
+- **Personal touches** — a live countdown, animated page transitions, and a photo timeline.
+
+## Built with
+
+| Layer | Technology |
+| --- | --- |
+| Framework | Next.js 15 App Router |
+| UI | React 19, Material UI, Emotion |
+| Language | TypeScript |
+| Data | PostgreSQL, Prisma ORM |
+| Integrations | Google Maps Embed API, EmailJS |
+| Styling | Custom MUI theme, responsive `sx` styles, Playfair Display |
+
+## How it works
+
+Invitation URLs use an ID such as `/rsvp?id=...`. The API resolves that ID to either one guest or a shared address, allowing everyone in a household to respond together. Submitted attendance, meal choices, and dietary requirements are stored through Prisma.
+
+The `/admin` dashboard provides the operational side of the site: guest-list management, bulk CSV import, response filtering, CSV export, and registry management.
+
+## Pages
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Wedding overview and countdown |
+| `/itinerary` | Schedule for the day |
+| `/registry` | Gift list and purchase flow |
+| `/menu` | Wedding breakfast and evening food |
+| `/travel` | Directions, transport advice, and map |
+| `/hotels` | Nearby accommodation suggestions |
+| `/faqs` | Common questions and contact form |
+| `/photos` | Photo timeline |
+| `/rsvp` | Guest RSVP and menu selection |
+| `/admin` | Guest and registry management |
+
+## Run locally
+
+### Prerequisites
+
+- Node.js 20 or later
+- npm
+- A PostgreSQL database
+- A Google Maps Embed API key for the travel map
+
+### 1. Clone and install
+
+```bash
+git clone git@github.com:l-rushton/Wedding-Frontend.git
+cd Wedding-Frontend
+npm install
+```
+
+### 2. Configure the environment
+
+Create a `.env` file in the project root:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE"
+ADMIN_PASSWORD="choose-a-password"
+NEXT_PUBLIC_GOOGLE_MAPS="your-google-maps-api-key"
+```
+
+`DATABASE_URL` is used by Prisma, `ADMIN_PASSWORD` unlocks the admin UI, and `NEXT_PUBLIC_GOOGLE_MAPS` enables the embedded venue map.
+
+### 3. Prepare the database
+
+```bash
+npx prisma generate
+npx prisma migrate deploy
+```
+
+For local schema development, use `npx prisma migrate dev` instead.
+
+### 4. Start the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev      # Start the development server
+npm run build    # Generate Prisma Client and create a production build
+npm run start    # Run the production server
+npm run lint     # Run the configured linter
+```
 
-## Learn More
+## Project structure
 
-To learn more about Next.js, take a look at the following resources:
+```text
+src/
+├── app/
+│   ├── api/          # RSVP, guest, registry, and admin endpoints
+│   ├── components/   # Shared interactive components
+│   ├── header/       # Responsive site navigation
+│   └── */page.tsx    # App Router pages
+└── theme/            # Material UI theme
+prisma/
+├── migrations/       # Database migrations
+└── schema.prisma     # Guest, menu, address, and registry models
+public/images/        # Site photography and artwork
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Design
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The visual system uses a warm ivory and forest-green palette, editorial Playfair Display typography, and original wedding photography. The interface is intentionally calm and minimal so guests can quickly find the information they need while the site still feels personal to the day.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with care by [Louis Rushton](https://github.com/l-rushton).
