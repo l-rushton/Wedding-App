@@ -8,6 +8,8 @@
 
 A full-stack wedding website designed and built for our guests. It brings the practical details, personalised invitations, RSVPs, menu selections, gift registry, and guest management into one elegant, mobile-friendly experience.
 
+#Check it out at [here](https://izzyandlouiswedding.com)
+
 ![Izzy and Louis at Ufton Court](public/images/izzyandlouis_ufton.jpg)
 
 ## Highlights
@@ -123,11 +125,3 @@ prisma/
 └── schema.prisma     # Guest, menu, address, and registry models
 public/images/        # Site photography and artwork
 ```
-
-## Design
-
-The visual system uses a warm ivory and forest-green palette, editorial Playfair Display typography, and original wedding photography. The interface is intentionally calm and minimal so guests can quickly find the information they need while the site still feels personal to the day.
-
----
-
-Built with care by [Louis Rushton](https://github.com/l-rushton).
